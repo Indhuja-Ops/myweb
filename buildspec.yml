@@ -8,7 +8,7 @@ env:
     
     IMAGE_TAG: "latest"
     
-    AWS_DEFAULT_REGION: "eu-north-1           
+    AWS_DEFAULT_REGION: "eu-north-1"
     
 phases:
 
