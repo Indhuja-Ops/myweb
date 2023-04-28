@@ -2,66 +2,61 @@ version: 0.2
 
 env:
 
-  variables:
+  variables:
 
-    IMAGE_REPO_NAME: "075577609825.dkr.ecr.eu-north-1.amazonaws.com/myweb"
-
-    IMAGE_TAG: "latest"
-
-    AWS_DEFAULT_REGION: "eu-north-1"
-
- 
-
+    IMAGE_REPO_NAME: "075577609825.dkr.ecr.eu-north-1.amazonaws.com/myweb"
+    
+    IMAGE_TAG: "latest"
+    
+    AWS_DEFAULT_REGION: "eu-north-1           
+    
 phases:
 
-  pre_build:
+  pre_build:
 
-    commands:
+    commands:
 
-      - echo Logging in to Amazon ECR...
+      - echo Logging in to Amazon ECR...
 
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $IMAGE_REPO_NAME.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $IMAGE_REPO_NAME.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
 
-      - REPOSITORY_URI=$IMAGE_REPO_NAME.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/myweb
+      - REPOSITORY_URI=$IMAGE_REPO_NAME.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/myweb
+      
+      - IMAGE_TAG=$CODEBUILD_BUILD_NUMBER
+      
+      - IMAGE_URI=$REPOSITORY_URI:$IMAGE_TAG
+      
+  build:
 
-      - IMAGE_TAG=$CODEBUILD_BUILD_NUMBER
+    commands:
+    
+      - echo Building the Docker image...
+    
+      - docker build -t $REPOSITORY_URI .
+      
+      - echo Tagging the Docker image...
+      
+      - docker tag $REPOSITORY_URI:latest $IMAGE_URI
+      
+  post_build:
 
-      - IMAGE_URI=$REPOSITORY_URI:$IMAGE_TAG
+    commands:
 
-
-  build:
-
-    commands:
-
-      - echo Building the Docker image...
-
-      - docker build -t $REPOSITORY_URI .
-
-      - echo Tagging the Docker image...
-
-      - docker tag $REPOSITORY_URI:latest $IMAGE_URI
-
-
-  post_build:
-
-    commands:
-
-      - echo Pushing the Docker image to Amazon ECR...
-
-      - docker push $IMAGE_URI
-
-      - echo Writing image definitions file...
-
-      - printf '[{"name":"myweb","imageUri":"%s"}]' $IMAGE_URI > imagedefinitions.json
+      - echo Pushing the Docker image to Amazon ECR...
+      
+      - docker push $IMAGE_URI
+      
+      - echo Writing image definitions file...
+      
+      - printf '[{"name":"myweb","imageUri":"%s"}]' $IMAGE_URI > imagedefinitions.json
       
       - cat imagedefinitions.json
 
 
 artifacts:
 
-  files:
-
-    - imagedefinitions.json
-
+    files:
+  
+      - imagedefinitions.json
 
 
