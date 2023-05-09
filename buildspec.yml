@@ -14,9 +14,9 @@ phases:
 
       - echo Logging in to Amazon ECR...
 
-      - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 075577609825.dkr.ecr.eu-north-1.amazonaws.com
+      - aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 075577609825.dkr.ecr.eu-north-1.amazonaws.com/indhurepo
 
-      - REPOSITORY_URI=075577609825.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/myweb
+      - REPOSITORY_URI=075577609825.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/indhurepo
       
       - IMAGE_TAG=$CODEBUILD_BUILD_NUMBER
       
@@ -44,7 +44,7 @@ phases:
       
       - echo Writing image definitions file...
       
-      - printf '[{"name":"myweb","imageUri":"%s"}]' $IMAGE_URI > imagedefinitions.json
+      - printf '[{"name":"indhurepo","imageUri":"%s"}]' $IMAGE_URI > imagedefinitions.json
       
       - cat imagedefinitions.json
 
